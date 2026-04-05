@@ -1,39 +1,47 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import fs from 'fs'; // 📁 Folder check karne ke liye
+import path from 'path';
 import connectDB from './config/db.js';
 
-// 1. Routes Import Karna
+// 1. Routes Import
 import reportRoutes from './routes/reportRoutes.js';
 import truckRoutes from './routes/truckRoutes.js';
 
-// 2. .env file se secret keys (PORT, MONGO_URI) load karna
+// 2. Environment Variables
 dotenv.config();
 
-// 3. Database (MongoDB) se connect karna
+// 3. Database Connection
 connectDB();
 
-// 4. Express App (Server) start karna
 const app = express();
 
-// 5. Middlewares
-app.use(cors()); // Frontend ko backend se securely connect hone deta hai
-app.use(express.json()); // Frontend se aane wale JSON data ko read karta hai
+// 🛠️ FIX: Uploads folder check (Render par folder apne aap ban jayega)
+const uploadDir = 'uploads';
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir);
+    console.log("✅ New 'uploads' folder created!");
+}
 
-// 6. Uploads folder ko Public banana (Very Important for images)
-// Isse frontend browser me "http://localhost:5000/uploads/photo.jpg" dikhegi
+// 4. Middlewares
+// Production mein CORS ko thoda "Smart" banate hain
+app.use(cors()); 
+app.use(express.json());
+
+// 5. Static Folder (Images ke liye)
 app.use('/uploads', express.static('uploads'));
 
-// 7. API Routes (Inko humne attach kar diya)
-app.use('/api/reports', reportRoutes); // Saare Kachra report wale kaam idhar
-app.use('/api/truck', truckRoutes);    // Truck tracking aur ETA wale kaam idhar
+// 6. API Routes
+app.use('/api/reports', reportRoutes);
+app.use('/api/truck', truckRoutes);
 
-// 8. Test Route (Server check karne ke liye)
+// 7. Health Check Route
 app.get('/', (req, res) => {
-  res.send('🚀 Safai Mitra Backend Engine is Running 100% Successfully!');
+  res.send('🚀 Safai Mitra Backend Engine is Running Live!');
 });
 
-// 9. Server ko chalu (Listen) karna
+// 8. Listen
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);

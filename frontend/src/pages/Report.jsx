@@ -7,8 +7,11 @@ const Report = () => {
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('Mixed Waste');
+  const [category, setCategory] = useState('Mixed');
   const [loading, setLoading] = useState(false);
+
+  // ✅ TUMHARA ASALI BACKEND LINK
+  const API_URL = "https://swachh-local.onrender.com";
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -20,8 +23,7 @@ const Report = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Submit button dabd gaya!"); // Check if button works
-
+    
     if (!image) {
       alert("Bhai, photo toh select kar lo!");
       return;
@@ -37,14 +39,13 @@ const Report = () => {
     formData.append('lng', '85.1410');
 
     try {
-      console.log("Sending data to backend...");
-      const res = await fetch('http://localhost:5000/api/reports', {
+      // 🌐 LOCALHOST HATAKAR RENDER KA LINK DAL DIYA HAI
+      const res = await fetch(`${API_URL}/api/reports`, {
         method: 'POST',
         body: formData,
       });
 
       const result = await res.json();
-      console.log("Backend Response:", result);
 
       if (res.ok) {
         alert('🎉 Report Sent Successfully!');
@@ -54,7 +55,8 @@ const Report = () => {
       }
     } catch (err) {
       console.error("Fetch Error:", err);
-      alert("Backend se connection nahi ho paya! Check karo backend terminal.");
+      // Agar Render "Sleep" mode mein hoga toh ye error aa sakta hai pehli baar mein
+      alert("Backend se connection nahi ho paya! Render server jaag raha ho sakta hai, 30 sec baad phir try karein.");
     } finally {
       setLoading(false);
     }
@@ -62,7 +64,7 @@ const Report = () => {
   
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }} className="min-h-screen bg-gray-50 pb-28">
-      {/* 🟢 Custom Header */}
+      {/* 🟢 Header */}
       <div className="bg-green-700 text-white p-6 rounded-b-[2.5rem] shadow-lg flex items-center gap-4">
         <button onClick={() => navigate('/')} className="bg-white/20 p-2 rounded-full hover:bg-white/30 transition">
           <ArrowLeft size={20} />
