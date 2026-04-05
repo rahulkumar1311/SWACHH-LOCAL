@@ -1,0 +1,15 @@
+# 🤫 Sensitive Files
+.env
+.env.local
+
+# 📦 Dependencies
+node_modules/
+npm-debug.log*
+
+# 📸 Local Uploads (Inhe GitHub par nahi daalte)
+backend/uploads/
+uploads/
+
+# 🛠️ System Files
+.DS_Store
+Thumbs.db
