@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Truck, Camera, MapPin, Bell, X, CheckCircle, AlertCircle } from 'lucide-react';
-import MapComponent from '../components/MapComponent'; // 🗺️ NAYA IMPORT ADD KIYA
+import MapComponent from '../components/MapComponent'; 
 
 const Home = () => {
   const navigate = useNavigate();
@@ -10,8 +10,12 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [showNotifications, setShowNotifications] = useState(false);
 
+  // ✅ TUMHARA ASALI BACKEND LINK
+  const API_URL = "https://swachh-local.onrender.com";
+
   const loadData = () => {
-    fetch('http://localhost:5000/api/reports')
+    // 🌐 Ab ye localhost nahi, Render se data laayega
+    fetch(`${API_URL}/api/reports`)
       .then(res => res.json())
       .then(data => { 
         if(Array.isArray(data)) {
@@ -28,12 +32,10 @@ const Home = () => {
 
   useEffect(() => {
     loadData(); 
-    
     const interval = setInterval(() => {
       loadData(); 
-      console.log("Checking for updates...");
+      console.log("Checking for updates from Render...");
     }, 5000);
-
     return () => clearInterval(interval); 
   }, []);
 
@@ -59,7 +61,8 @@ const Home = () => {
             {resolvedNotifications.length > 0 ? resolvedNotifications.map(n => (
               <div key={n._id} className="p-4 bg-green-50/50 rounded-[1.5rem] border border-green-100 flex flex-col gap-3 shadow-sm hover:shadow-md transition">
                 <div className="flex gap-3">
-                  <img src={`http://localhost:5000${n.imageUrl}`} className="w-14 h-14 rounded-xl object-cover border-2 border-white shadow-sm" alt="resolved" />
+                  {/* 📸 Image link updated to Render */}
+                  <img src={`${API_URL}${n.imageUrl}`} className="w-14 h-14 rounded-xl object-cover border-2 border-white shadow-sm" alt="resolved" />
                   <div className="flex-1">
                     <div className="flex items-center gap-1 text-green-600 mb-1">
                       <CheckCircle size={14} />
@@ -147,12 +150,11 @@ const Home = () => {
             </button>
           </div>
 
-          {/* 🗺️ NAYA MAP SECTION YAHAN ADD HUA HAI */}
+          {/* 🗺️ Live Waste Map */}
           <div className="bg-white p-6 rounded-[2.5rem] shadow-xl border border-gray-100">
             <h3 className="font-black text-xl text-gray-800 mb-4 flex items-center gap-2">
               <MapPin size={24} className="text-green-600" /> Live Waste Map
             </h3>
-            {/* Map ko saare reports bhej rahe hain taaki marker dikh sakein */}
             <MapComponent reports={allReports} /> 
           </div>
 
@@ -167,7 +169,8 @@ const Home = () => {
               ) : reports.length > 0 ? (
                 reports.map((r, i) => (
                   <div key={i} className="flex gap-4 items-center bg-gray-50 p-4 rounded-[1.5rem] border border-gray-100 hover:border-green-200 transition">
-                    <img src={`http://localhost:5000${r.imageUrl}`} className="w-16 h-16 rounded-2xl object-cover bg-gray-200 shadow-sm" alt="spot" />
+                    {/* 📸 Recent spots image link updated to Render */}
+                    <img src={`${API_URL}${r.imageUrl}`} className="w-16 h-16 rounded-2xl object-cover bg-gray-200 shadow-sm" alt="spot" />
                     <div className="flex-1 min-w-0">
                       <h4 className="font-bold text-gray-800 truncate text-sm">{r.description || "Waste Spot"}</h4>
                       <p className="text-[9px] text-gray-400 font-black uppercase mt-0.5 tracking-tighter">{r.category}</p>
@@ -198,7 +201,6 @@ const Home = () => {
   );
 };
 
-// Help with Icon
 const ListIcon = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>;
 
 export default Home;
